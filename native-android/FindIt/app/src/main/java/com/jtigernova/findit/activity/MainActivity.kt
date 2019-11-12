@@ -1,4 +1,4 @@
-package com.jtigernova.findit
+package com.jtigernova.findit.activity
 
 import android.os.Bundle
 import android.view.Menu
@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.jtigernova.findit.R
 import com.jtigernova.findit.data.Venue
 import com.jtigernova.findit.data.VenueCategory
 import com.jtigernova.findit.data.VenueLocation

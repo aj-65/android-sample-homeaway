@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.data.Venue
 
@@ -33,6 +34,8 @@ class VenueItemAdapter(private val context: Context, private val data: Array<Ven
 
         holder.view.setOnClickListener {
             Toast.makeText(context, "Why did you click ${venue.name}", Toast.LENGTH_LONG).show()
+
+            Nav.venueDetails(context)
         }
     }
 
