@@ -3,7 +3,6 @@ package com.jtigernova.findit.ui
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -28,9 +27,11 @@ class VenueItemAdapter(private val context: Context, private val data: Array<Ven
         val venue = data[position]
 
         //replace the view
-        holder.view.findViewById<ImageView>(R.id.venue_image).setImageResource(
-                R.drawable.ic_launcher_foreground)
         holder.view.findViewById<TextView>(R.id.venue_name).text = venue.name
+
+        //load image
+        context.loadImgInto(uri = venue.mainCategory?.icon?.fullPath,
+                imageView = holder.view.findViewById(R.id.venue_image))
 
         holder.view.setOnClickListener {
             Toast.makeText(context, "Why did you click ${venue.name}", Toast.LENGTH_LONG).show()

@@ -32,7 +32,7 @@ class VenueDetailActivity : AppCompatActivity() {
         address = findViewById(R.id.address)
 
         name.text = venue?.name
-        category.text = venue?.mainCategory ?: "Unknown"
+        category.text = venue?.mainCategoryName ?: "Unknown"
 
         val sb = StringBuilder()
 

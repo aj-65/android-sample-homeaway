@@ -15,7 +15,9 @@ data class Venue(val id: String?, val name: String?, val url: String?,
 
     override fun describeContents() = 0
 
-    val mainCategory = categories.firstOrNull { it?.primary == true }?.name
+    val mainCategory = categories.firstOrNull { it?.primary == true }
+
+    val mainCategoryName = mainCategory?.name
 
     override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
         writeString(id)
@@ -109,6 +111,8 @@ data class VenueCategoryIcon(val prefix: String?, val suffix: String?) : Parcela
             source.readString(),
             source.readString()
     )
+
+    val fullPath = prefix + suffix
 
     override fun describeContents() = 0
 

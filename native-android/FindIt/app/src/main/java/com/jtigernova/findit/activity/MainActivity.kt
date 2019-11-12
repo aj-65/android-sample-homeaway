@@ -12,6 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.jtigernova.findit.R
 import com.jtigernova.findit.data.Venue
 import com.jtigernova.findit.data.VenueCategory
+import com.jtigernova.findit.data.VenueCategoryIcon
 import com.jtigernova.findit.data.VenueLocation
 import com.jtigernova.findit.ui.VenueItemAdapter
 
@@ -38,11 +39,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun initResults() {
 
+        val mockIcon = VenueCategoryIcon("https://www.google.com/images/branding/" +
+                "googlelogo/2x/googlelogo_color_272x92dp", ".png")
+
         val mock = arrayOf(
                 Venue(id = "0", name = "Bob's", url = "https://google.com",
                         categories = listOf(
                                 VenueCategory(id = "0", name = "Test", shortName = "Testtest",
-                                        pluralName = "Tests", primary = true, icon = null)),
+                                        pluralName = "Tests", primary = true, icon = mockIcon)),
                         location = VenueLocation(address = "123 lane", lat = 21.20202,
                                 lng = 30.23222, postalCode = "23231", cc = "", city = "Austin",
                                 state = "Texas", country = "USA",
@@ -50,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 Venue(id = "1", name = "Tim Burger Shop", url = "https://google.com",
                         categories = listOf(
                                 VenueCategory(id = "1", name = "Test", shortName = "Testtest",
-                                        pluralName = "Tests", primary = true, icon = null)),
+                                        pluralName = "Tests", primary = true, icon = mockIcon)),
                         location = VenueLocation(address = "123 lane", lat = 21.20202,
                                 lng = 30.23222, postalCode = "23231", cc = "", city = "Austin",
                                 state = "Texas", country = "USA",
