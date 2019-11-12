@@ -4,44 +4,24 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Venue(val id: String?, val name: String?, val url: String?,
-                 val categories: Array<VenueCategory?>, val location: VenueLocation?) : Parcelable {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Venue) return false
-
-        if (id != other.id) return false
-        if (name != other.name) return false
-        if (url != other.url) return false
-        if (!categories.contentEquals(other.categories)) return false
-        if (location != other.location) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + url.hashCode()
-        result = 31 * result + categories.contentHashCode()
-        result = 31 * result + location.hashCode()
-        return result
-    }
-
+                 val categories: List<VenueCategory?>, val location: VenueLocation?) : Parcelable {
     constructor(source: Parcel) : this(
             source.readString(),
             source.readString(),
             source.readString(),
-            source.readParcelableArray(VenueCategory::class.java.classLoader) as Array<VenueCategory?>,
+            source.createTypedArrayList(VenueCategory.CREATOR)!!,
             source.readParcelable<VenueLocation>(VenueLocation::class.java.classLoader)
     )
 
     override fun describeContents() = 0
 
+    val mainCategory = categories.firstOrNull { it?.primary == true }?.name
+
     override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
         writeString(id)
         writeString(name)
         writeString(url)
-        writeParcelableArray(categories, 0)
+        writeTypedList(categories)
         writeParcelable(location, 0)
     }
 
@@ -57,37 +37,7 @@ data class Venue(val id: String?, val name: String?, val url: String?,
 data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
                          val postalCode: String?, val cc: String?, val city: String?,
                          val state: String?, val country: String?,
-                         val formattedAddress: Array<String?>) : Parcelable {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is VenueLocation) return false
-
-        if (address != other.address) return false
-        if (lat != other.lat) return false
-        if (lng != other.lng) return false
-        if (postalCode != other.postalCode) return false
-        if (cc != other.cc) return false
-        if (city != other.city) return false
-        if (state != other.state) return false
-        if (country != other.country) return false
-        if (!formattedAddress.contentEquals(other.formattedAddress)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = address.hashCode()
-        result = 31 * result + lat.hashCode()
-        result = 31 * result + lng.hashCode()
-        result = 31 * result + postalCode.hashCode()
-        result = 31 * result + cc.hashCode()
-        result = 31 * result + city.hashCode()
-        result = 31 * result + state.hashCode()
-        result = 31 * result + country.hashCode()
-        result = 31 * result + formattedAddress.contentHashCode()
-        return result
-    }
-
+                         val formattedAddress: List<String?>) : Parcelable {
     constructor(source: Parcel) : this(
             source.readString(),
             source.readDouble(),
@@ -97,7 +47,7 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
             source.readString(),
             source.readString(),
             source.readString(),
-            source.readArray(String::class.java.classLoader) as Array<String?>
+            ArrayList<String?>().apply { source.readList(this as List<*>, String::class.java.classLoader) }
     )
 
     override fun describeContents() = 0
@@ -111,7 +61,7 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
         writeString(city)
         writeString(state)
         writeString(country)
-        writeStringArray(formattedAddress)
+        writeList(formattedAddress)
     }
 
     companion object {

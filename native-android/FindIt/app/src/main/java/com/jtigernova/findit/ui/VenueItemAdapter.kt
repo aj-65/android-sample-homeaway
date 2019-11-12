@@ -35,7 +35,7 @@ class VenueItemAdapter(private val context: Context, private val data: Array<Ven
         holder.view.setOnClickListener {
             Toast.makeText(context, "Why did you click ${venue.name}", Toast.LENGTH_LONG).show()
 
-            Nav.venueDetails(context)
+            Nav.venueDetails(context, venue)
         }
     }
 
