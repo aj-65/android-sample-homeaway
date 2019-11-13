@@ -3,7 +3,6 @@ package com.jtigernova.findit.activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +15,7 @@ import com.jtigernova.findit.data.VenueCategoryIcon
 import com.jtigernova.findit.data.VenueLocation
 import com.jtigernova.findit.ui.VenueItemAdapter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -63,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                                         "United States"))))
 
         viewManager = LinearLayoutManager(this@MainActivity)
-        viewAdapter = VenueItemAdapter(context = this@MainActivity, data = mock)
+        viewAdapter = VenueItemAdapter(context = this@MainActivity, data = mock, api = mFourSq)
 
         recyclerView = findViewById<RecyclerView>(R.id.results).apply {
             //content changes do not change the layout size of the RecyclerView

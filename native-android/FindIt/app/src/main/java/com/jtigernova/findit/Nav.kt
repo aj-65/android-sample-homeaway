@@ -6,7 +6,7 @@ import com.jtigernova.findit.activity.VenueDetailActivity
 import com.jtigernova.findit.data.Venue
 
 object Nav {
-    fun venueDetails(context: Context, venue: Venue) {
+    fun venueDetails(context: Context, venue: Venue?) {
         Intent(context, VenueDetailActivity::class.java).let {
             it.putExtra(Venue::class.java.name, venue)
 
