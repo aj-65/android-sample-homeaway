@@ -18,8 +18,9 @@ import com.jtigernova.findit.Constants.CITY_CENTER_GPS
 import com.jtigernova.findit.Constants.CITY_NAME
 import com.jtigernova.findit.Constants.DEFAULT_ZOOM
 import com.jtigernova.findit.R
-import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.ext.dpToPixels
+import com.jtigernova.findit.model.Venue
+import kotlinx.android.synthetic.main.content_venue_detail.*
 
 class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -59,6 +60,8 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
         name.text = venue?.name
         category.text = venue?.mainCategoryName ?: "Unknown"
+        venue_distance_from_city_center.text = getString(R.string.distance_from_city_center,
+                venue?.location?.getDistanceFromCityCenterInMilesDisplay())
 
         val sb = StringBuilder()
 

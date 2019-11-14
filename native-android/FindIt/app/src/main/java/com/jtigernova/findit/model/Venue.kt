@@ -43,9 +43,8 @@ data class Venue(val id: String?, val name: String?, val url: String?,
 data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
                          val postalCode: String?, val cc: String?, val city: String?,
                          val state: String?, val country: String?,
-                         val formattedAddress: List<String?>) : Parcelable {
-
-    private var milesFromCityCenter: Double = 0.0
+                         val formattedAddress: List<String?>,
+                         private var metersFromCityCenter: Double = 0.0) : Parcelable {
 
     constructor(source: Parcel) : this(
             source.readString(),
@@ -56,7 +55,11 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
             source.readString(),
             source.readString(),
             source.readString(),
-            ArrayList<String?>().apply { source.readList(this as List<*>, String::class.java.classLoader) }
+            ArrayList<String?>().apply {
+                source.readList(this as List<*>,
+                        String::class.java.classLoader)
+            },
+            source.readDouble()
     )
 
     override fun describeContents() = 0
@@ -71,17 +74,18 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
         writeString(state)
         writeString(country)
         writeList(formattedAddress)
+        writeDouble(metersFromCityCenter)
     }
 
     fun calculateDistanceFromCityCenter(cityLatLng: LatLng) {
-        milesFromCityCenter = SphericalUtil.computeDistanceBetween(cityLatLng, LatLng(lat, lng))
+        metersFromCityCenter = SphericalUtil.computeDistanceBetween(cityLatLng, LatLng(lat, lng))
     }
 
     fun getDistanceFromCityCenterInMiles(): Double {
-        return milesFromCityCenter / 1609.34
+        return metersFromCityCenter / 1609.34
     }
 
-    fun getDistanceFromCityCenterDisplay(): String {
+    fun getDistanceFromCityCenterInMilesDisplay(): String {
         //convert from meters to miles and format to 2 decimal places, rounded up
         return DecimalFormat("#.##").apply {
             roundingMode = RoundingMode.CEILING
@@ -90,7 +94,8 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
 
     companion object {
         @JvmField
-        val CREATOR: Parcelable.Creator<VenueLocation> = object : Parcelable.Creator<VenueLocation> {
+        val CREATOR: Parcelable.Creator<VenueLocation> = object :
+                Parcelable.Creator<VenueLocation> {
             override fun createFromParcel(source: Parcel): VenueLocation = VenueLocation(source)
             override fun newArray(size: Int): Array<VenueLocation?> = arrayOfNulls(size)
         }
@@ -98,7 +103,8 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
 }
 
 data class VenueCategory(val id: String?, val name: String?, val shortName: String?,
-                         val pluralName: String?, val primary: Boolean, val icon: VenueCategoryIcon?) : Parcelable {
+                         val pluralName: String?, val primary: Boolean,
+                         val icon: VenueCategoryIcon?) : Parcelable {
     constructor(source: Parcel) : this(
             source.readString(),
             source.readString(),
@@ -121,7 +127,8 @@ data class VenueCategory(val id: String?, val name: String?, val shortName: Stri
 
     companion object {
         @JvmField
-        val CREATOR: Parcelable.Creator<VenueCategory> = object : Parcelable.Creator<VenueCategory> {
+        val CREATOR: Parcelable.Creator<VenueCategory> = object :
+                Parcelable.Creator<VenueCategory> {
             override fun createFromParcel(source: Parcel): VenueCategory = VenueCategory(source)
             override fun newArray(size: Int): Array<VenueCategory?> = arrayOfNulls(size)
         }
@@ -143,10 +150,14 @@ data class VenueCategoryIcon(val prefix: String?, val suffix: String?) : Parcela
         writeString(suffix)
     }
 
+
     companion object {
         @JvmField
-        val CREATOR: Parcelable.Creator<VenueCategoryIcon> = object : Parcelable.Creator<VenueCategoryIcon> {
-            override fun createFromParcel(source: Parcel): VenueCategoryIcon = VenueCategoryIcon(source)
+        val CREATOR: Parcelable.Creator<VenueCategoryIcon> = object :
+                Parcelable.Creator<VenueCategoryIcon> {
+            override fun createFromParcel(source: Parcel): VenueCategoryIcon =
+                    VenueCategoryIcon(source)
+
             override fun newArray(size: Int): Array<VenueCategoryIcon?> = arrayOfNulls(size)
         }
     }

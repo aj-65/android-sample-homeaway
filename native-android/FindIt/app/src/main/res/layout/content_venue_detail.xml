@@ -30,6 +30,14 @@
             android:textSize="14sp" android:textStyle="italic" />
 
         <TextView
+            android:id="@+id/venue_distance_from_city_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="@string/distance_from_city_center"
+            android:textSize="12sp" android:textStyle="italic" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"

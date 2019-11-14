@@ -31,9 +31,9 @@ class VenueItemAdapter(private val context: Context, private val data: Array<Ven
 
         //replace the view
         holder.view.findViewById<TextView>(R.id.venue_name).text = venue.name
-        holder.view.findViewById<TextView>(R.id.venue_distance_from_center).text =
-                context.getString(R.string.miles_from_city_center,
-                        venue.location?.getDistanceFromCityCenterDisplay())
+        holder.view.findViewById<TextView>(R.id.venue_distance_from_city_center).text =
+                context.getString(R.string.distance_from_city_center,
+                        venue.location?.getDistanceFromCityCenterInMilesDisplay())
 
         //load image
         context.loadImgInto(uri = venue.mainCategory?.icon?.fullPath,
