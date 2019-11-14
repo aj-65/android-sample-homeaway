@@ -95,4 +95,6 @@
     <string name="distance_from_city_center">%s miles from city center</string>
     <string name="click_marker">Click on a marker!</string>
     <string name="click_learn">Click to learn more</string>
+    <string name="add_favorite">Add favorite</string>
+    <string name="saved_favorite">Saved!</string>
 </resources>

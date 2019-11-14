@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jtigernova.findit.Constants.CITY_CENTER_GPS
@@ -13,7 +15,9 @@ import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.model.VenueCategory
 import com.jtigernova.findit.model.VenueCategoryIcon
 import com.jtigernova.findit.model.VenueLocation
+import com.jtigernova.findit.persistence.Prefs
 import com.jtigernova.findit.view.VenueItemAdapter
+import com.jtigernova.findit.viewmodel.FavoriteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -21,6 +25,8 @@ class MainActivity : BaseActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+
+    private lateinit var favViewModel: FavoriteViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +36,19 @@ class MainActivity : BaseActivity() {
 
         fab.hide()
 
+        initViewModels()
+
         initResults()
+    }
+
+    private fun initViewModels() {
+        favViewModel = ViewModelProviders.of(this).get(FavoriteViewModel::class.java)
+
+        favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this@MainActivity)
+
+        favViewModel.favoriteVenues.observe(this, Observer<MutableSet<String>> {
+            Prefs.saveFavoriteVenues(this@MainActivity, it)
+        })
     }
 
     private fun initResults() {
@@ -75,7 +93,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getAdapter(venues: ArrayList<Venue>): RecyclerView.Adapter<*> {
-        viewAdapter = VenueItemAdapter(context = this@MainActivity, data = venues, api = mFourSq)
+        viewAdapter = VenueItemAdapter(context = this@MainActivity, venues = venues,
+                api = mFourSq, favoriteViewModel = favViewModel,
+                favoriteVenueIds = favViewModel.favoriteVenues.value!!)
 
         if (venues.any()) {
             fab.setOnClickListener {

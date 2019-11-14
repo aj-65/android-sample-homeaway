@@ -2,19 +2,24 @@ package com.jtigernova.findit.view
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.api.FourSq
-import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.ext.loadImgInto
+import com.jtigernova.findit.ext.updateFavoriteText
+import com.jtigernova.findit.model.Venue
+import com.jtigernova.findit.viewmodel.FavoriteViewModel
 
-class VenueItemAdapter(private val context: Context, private val data: List<Venue>,
-                       private val api: FourSq) :
+class VenueItemAdapter(private val context: Context, private val venues: List<Venue>,
+                       private val favoriteVenueIds: Set<String>,
+                       private val api: FourSq, private val favoriteViewModel: FavoriteViewModel) :
         RecyclerView.Adapter<VenueItemAdapter.ViewHolder>() {
     class ViewHolder(val view: LinearLayout) : RecyclerView.ViewHolder(view)
 
@@ -23,14 +28,22 @@ class VenueItemAdapter(private val context: Context, private val data: List<Venu
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.view_venue_list_item, parent, false) as LinearLayout
 
+
         return ViewHolder(view)
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val venue = data[position]
+        val venue = venues[position]
+        val name = holder.view.findViewById<TextView>(R.id.venue_name)
+        val icon = holder.view.findViewById<ImageView>(R.id.venue_image)
+        val fav = holder.view.findViewById<CheckBox>(R.id.venue_fav)
 
         //replace the view
-        holder.view.findViewById<TextView>(R.id.venue_name).text = venue.name
+        name.text = venue.name
         holder.view.findViewById<TextView>(R.id.venue_distance_from_city_center).text =
                 context.getString(R.string.distance_from_city_center,
                         venue.location?.getDistanceFromCityCenterInMilesDisplay())
@@ -39,16 +52,32 @@ class VenueItemAdapter(private val context: Context, private val data: List<Venu
         context.loadImgInto(uri = venue.mainCategory?.icon?.fullPath,
                 imageView = holder.view.findViewById(R.id.venue_image))
 
-        holder.view.setOnClickListener {
-            api.test { success, data ->
-                Toast.makeText(context, "Why did you click ${venue.name}",
-                        Toast.LENGTH_LONG).show()
+        fav.isChecked = favoriteVenueIds.contains(venue.id)
+        fav.updateFavoriteText(context)
 
-                Nav.venueDetails(context, venue)
+        //event listeners
+        with(venueClick(venue)) {
+            name.setOnClickListener(this)
+            icon.setOnClickListener(this)
+        }
+
+        fav.setOnCheckedChangeListener { p0, checked ->
+            if (checked) {
+                favoriteViewModel.addFavoriteVenue(venue)
+            } else {
+                favoriteViewModel.removeFavoriteVenue(venue)
             }
+
+            fav.updateFavoriteText(context)
         }
     }
 
-    override fun getItemCount() = data.size
+    private fun venueClick(venue: Venue): (View) -> Unit {
+        return {
+            Nav.venueDetails(context, venue)
+        }
+    }
+
+    override fun getItemCount() = venues.size
 
 }
