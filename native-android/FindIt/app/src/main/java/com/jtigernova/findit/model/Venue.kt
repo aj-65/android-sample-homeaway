@@ -1,7 +1,11 @@
-package com.jtigernova.findit.data
+package com.jtigernova.findit.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 data class Venue(val id: String?, val name: String?, val url: String?,
                  val categories: List<VenueCategory?>, val location: VenueLocation?) : Parcelable {
@@ -40,6 +44,9 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
                          val postalCode: String?, val cc: String?, val city: String?,
                          val state: String?, val country: String?,
                          val formattedAddress: List<String?>) : Parcelable {
+
+    private var milesFromCityCenter: Double = 0.0
+
     constructor(source: Parcel) : this(
             source.readString(),
             source.readDouble(),
@@ -64,6 +71,21 @@ data class VenueLocation(val address: String?, val lat: Double, val lng: Double,
         writeString(state)
         writeString(country)
         writeList(formattedAddress)
+    }
+
+    fun calculateDistanceFromCityCenter(cityLatLng: LatLng) {
+        milesFromCityCenter = SphericalUtil.computeDistanceBetween(cityLatLng, LatLng(lat, lng))
+    }
+
+    fun getDistanceFromCityCenterInMiles(): Double {
+        return milesFromCityCenter / 1609.34
+    }
+
+    fun getDistanceFromCityCenterDisplay(): String {
+        //convert from meters to miles and format to 2 decimal places, rounded up
+        return DecimalFormat("#.##").apply {
+            roundingMode = RoundingMode.CEILING
+        }.format(getDistanceFromCityCenterInMiles())
     }
 
     companion object {

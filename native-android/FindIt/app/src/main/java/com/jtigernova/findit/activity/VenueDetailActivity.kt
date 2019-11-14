@@ -14,9 +14,12 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import com.jtigernova.findit.Constants.CITY_CENTER_GPS
+import com.jtigernova.findit.Constants.CITY_NAME
+import com.jtigernova.findit.Constants.DEFAULT_ZOOM
 import com.jtigernova.findit.R
-import com.jtigernova.findit.data.Venue
-import com.jtigernova.findit.ui.dpToPixels
+import com.jtigernova.findit.model.Venue
+import com.jtigernova.findit.ext.dpToPixels
 
 class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -83,7 +86,7 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //add marker for city
 
-        mMap.addMarker(MarkerOptions().position(CITY_GPS).title("Center of $CITY_NAME"))
+        mMap.addMarker(MarkerOptions().position(CITY_CENTER_GPS).title("Center of $CITY_NAME"))
                 .showInfoWindow()
 
         val venueLoc = venue.location
@@ -99,12 +102,12 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val padding = dpToPixels(R.dimen.padding_map_content)
 
-            val bounds = LatLngBounds.Builder().include(CITY_GPS).include(venueLocLatLng).build()
+            val bounds = LatLngBounds.Builder().include(CITY_CENTER_GPS).include(venueLocLatLng).build()
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
         } else {
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_GPS, DEFAULT_ZOOM))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, DEFAULT_ZOOM))
         }
     }
 
@@ -124,10 +127,5 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private val TAG = VenueDetailActivity::class.java.simpleName
         private const val KEY_CAMERA_POSITION = "camera.position"
-
-        private const val DEFAULT_ZOOM = 12.0f
-
-        private val CITY_GPS = LatLng(30.26715, -97.74306)
-        private const val CITY_NAME = "Austin"
     }
 }

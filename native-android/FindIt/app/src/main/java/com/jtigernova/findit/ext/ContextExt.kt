@@ -1,4 +1,4 @@
-package com.jtigernova.findit.ui
+package com.jtigernova.findit.ext
 
 import android.content.Context
 import android.util.TypedValue

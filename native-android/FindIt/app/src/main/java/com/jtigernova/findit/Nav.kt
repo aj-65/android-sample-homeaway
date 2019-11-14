@@ -3,7 +3,7 @@ package com.jtigernova.findit
 import android.content.Context
 import android.content.Intent
 import com.jtigernova.findit.activity.VenueDetailActivity
-import com.jtigernova.findit.data.Venue
+import com.jtigernova.findit.model.Venue
 
 object Nav {
     fun venueDetails(context: Context, venue: Venue?) {

@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.jtigernova.findit.Constants.CITY_CENTER_GPS
 import com.jtigernova.findit.R
-import com.jtigernova.findit.data.Venue
-import com.jtigernova.findit.data.VenueCategory
-import com.jtigernova.findit.data.VenueCategoryIcon
-import com.jtigernova.findit.data.VenueLocation
-import com.jtigernova.findit.ui.VenueItemAdapter
+import com.jtigernova.findit.model.Venue
+import com.jtigernova.findit.model.VenueCategory
+import com.jtigernova.findit.model.VenueCategoryIcon
+import com.jtigernova.findit.model.VenueLocation
+import com.jtigernova.findit.view.VenueItemAdapter
 
 class MainActivity : BaseActivity() {
 
@@ -41,7 +42,7 @@ class MainActivity : BaseActivity() {
         val mockIcon = VenueCategoryIcon("https://www.google.com/images/branding/" +
                 "googlelogo/2x/googlelogo_color_272x92dp", ".png")
 
-        val mock = arrayOf(
+        val venues = arrayOf(
                 Venue(id = "0", name = "Bob's", url = "https://google.com",
                         categories = listOf(
                                 VenueCategory(id = "0", name = "Test", shortName = "Testtest",
@@ -61,8 +62,12 @@ class MainActivity : BaseActivity() {
                                         "Seattle, WA 98104",
                                         "United States"))))
 
+        for (venue in venues) {
+            venue.location?.calculateDistanceFromCityCenter(CITY_CENTER_GPS)
+        }
+
         viewManager = LinearLayoutManager(this@MainActivity)
-        viewAdapter = VenueItemAdapter(context = this@MainActivity, data = mock, api = mFourSq)
+        viewAdapter = VenueItemAdapter(context = this@MainActivity, data = venues, api = mFourSq)
 
         recyclerView = findViewById<RecyclerView>(R.id.results).apply {
             //content changes do not change the layout size of the RecyclerView

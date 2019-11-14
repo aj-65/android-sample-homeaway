@@ -38,7 +38,7 @@
             android:id="@+id/venue_distance_from_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="20 miles from city center"
+            android:text="@string/miles_from_city_center"
             android:textSize="16sp" />
 
     </LinearLayout>

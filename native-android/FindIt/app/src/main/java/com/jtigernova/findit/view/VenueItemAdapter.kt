@@ -1,7 +1,6 @@
-package com.jtigernova.findit.ui
+package com.jtigernova.findit.view
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -11,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.api.FourSq
-import com.jtigernova.findit.data.Venue
+import com.jtigernova.findit.model.Venue
+import com.jtigernova.findit.ext.loadImgInto
 
 class VenueItemAdapter(private val context: Context, private val data: Array<Venue>,
                        private val api: FourSq) :
@@ -31,17 +31,16 @@ class VenueItemAdapter(private val context: Context, private val data: Array<Ven
 
         //replace the view
         holder.view.findViewById<TextView>(R.id.venue_name).text = venue.name
+        holder.view.findViewById<TextView>(R.id.venue_distance_from_center).text =
+                context.getString(R.string.miles_from_city_center,
+                        venue.location?.getDistanceFromCityCenterDisplay())
 
         //load image
         context.loadImgInto(uri = venue.mainCategory?.icon?.fullPath,
                 imageView = holder.view.findViewById(R.id.venue_image))
 
         holder.view.setOnClickListener {
-            Log.i(">>", "Waiting...")
-
             api.test { success, data ->
-                Log.i(">>", "res: $success")
-
                 Toast.makeText(context, "Why did you click ${venue.name}",
                         Toast.LENGTH_LONG).show()
 

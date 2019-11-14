@@ -3,7 +3,7 @@ package com.jtigernova.findit.api
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.jtigernova.findit.data.Venue
+import com.jtigernova.findit.model.Venue
 
 class FourSq(private val requester: IRequester) {
 
