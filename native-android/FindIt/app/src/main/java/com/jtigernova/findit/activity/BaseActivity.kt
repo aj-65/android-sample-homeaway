@@ -21,10 +21,8 @@ open class BaseActivity : AppCompatActivity(), IRequester {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState == null) {
-            networkSingleton = NetworkSingleton.getInstance(this@BaseActivity)
-            mFourSq = FourSq(this@BaseActivity)
-        }
+        networkSingleton = NetworkSingleton.getInstance(this@BaseActivity)
+        mFourSq = FourSq(this@BaseActivity)
     }
 
     override fun <T> doRequest(req: Request<T>) {
