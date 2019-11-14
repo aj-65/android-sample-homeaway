@@ -93,4 +93,6 @@
     </string>
     <string name="title_activity_maps">Map</string>
     <string name="distance_from_city_center">%s miles from city center</string>
+    <string name="click_marker">Click on a marker!</string>
+    <string name="click_learn">Click to learn more</string>
 </resources>

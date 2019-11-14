@@ -5,8 +5,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -33,7 +31,6 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var address: TextView
 
     private lateinit var mMap: GoogleMap
-    private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +38,7 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 //        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        venue = intent.getParcelableExtra(Venue::class.java.name)!!
+        venue = intent.getParcelableExtra(PARAM_VENUE)!!
 
         initDetail(venue)
         initMap()
@@ -51,8 +48,6 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
     private fun initDetail(venue: Venue?) {
@@ -109,7 +104,13 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val bounds = LatLngBounds.Builder().include(CITY_CENTER_GPS).include(venueLocLatLng).build()
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+            //as we wait for the map to fully load, let's focus on the city center
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, DEFAULT_ZOOM))
+
+            //make sure that map layout is loaded before setting bounds
+            mMap.setOnMapLoadedCallback {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+            }
         } else {
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, DEFAULT_ZOOM))
