@@ -11,7 +11,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jtigernova.findit.R
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+const val PARAM_VENUES = "venues"
+
+class VenuesMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
 

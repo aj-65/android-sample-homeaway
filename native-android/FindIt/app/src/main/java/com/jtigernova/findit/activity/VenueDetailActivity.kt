@@ -22,6 +22,8 @@ import com.jtigernova.findit.ext.dpToPixels
 import com.jtigernova.findit.model.Venue
 import kotlinx.android.synthetic.main.content_venue_detail.*
 
+const val PARAM_VENUE = "venue"
+
 class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var venue: Venue

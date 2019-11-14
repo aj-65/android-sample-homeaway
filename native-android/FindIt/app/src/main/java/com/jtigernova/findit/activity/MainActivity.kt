@@ -6,15 +6,15 @@ import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.jtigernova.findit.Constants.CITY_CENTER_GPS
+import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.model.VenueCategory
 import com.jtigernova.findit.model.VenueCategoryIcon
 import com.jtigernova.findit.model.VenueLocation
 import com.jtigernova.findit.view.VenueItemAdapter
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
 
@@ -28,11 +28,7 @@ class MainActivity : BaseActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        fab.hide()
 
         initResults()
     }
@@ -42,7 +38,7 @@ class MainActivity : BaseActivity() {
         val mockIcon = VenueCategoryIcon("https://www.google.com/images/branding/" +
                 "googlelogo/2x/googlelogo_color_272x92dp", ".png")
 
-        val venues = arrayOf(
+        val venues = arrayListOf(
                 Venue(id = "0", name = "Bob's", url = "https://google.com",
                         categories = listOf(
                                 VenueCategory(id = "0", name = "Test", shortName = "Testtest",
@@ -67,7 +63,6 @@ class MainActivity : BaseActivity() {
         }
 
         viewManager = LinearLayoutManager(this@MainActivity)
-        viewAdapter = VenueItemAdapter(context = this@MainActivity, data = venues, api = mFourSq)
 
         recyclerView = findViewById<RecyclerView>(R.id.results).apply {
             //content changes do not change the layout size of the RecyclerView
@@ -75,8 +70,25 @@ class MainActivity : BaseActivity() {
 
             layoutManager = viewManager
 
-            adapter = viewAdapter
+            adapter = getAdapter(venues)
         }
+    }
+
+    private fun getAdapter(venues: ArrayList<Venue>): RecyclerView.Adapter<*> {
+        viewAdapter = VenueItemAdapter(context = this@MainActivity, data = venues, api = mFourSq)
+
+        if (venues.any()) {
+            fab.setOnClickListener {
+                Nav.venuesMap(context = this@MainActivity, venues = venues)
+            }
+
+            fab.show()
+        } else {
+            fab.hide()
+            fab.setOnClickListener(null)
+        }
+
+        return viewAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

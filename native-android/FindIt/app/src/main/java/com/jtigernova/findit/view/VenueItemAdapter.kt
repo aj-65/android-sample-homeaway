@@ -13,7 +13,7 @@ import com.jtigernova.findit.api.FourSq
 import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.ext.loadImgInto
 
-class VenueItemAdapter(private val context: Context, private val data: Array<Venue>,
+class VenueItemAdapter(private val context: Context, private val data: List<Venue>,
                        private val api: FourSq) :
         RecyclerView.Adapter<VenueItemAdapter.ViewHolder>() {
     class ViewHolder(val view: LinearLayout) : RecyclerView.ViewHolder(view)
