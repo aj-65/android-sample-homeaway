@@ -8,16 +8,39 @@
         android:id="@+id/venue_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:contentDescription="Icon"
         android:padding="10dp"
         android:src="@mipmap/ic_launcher_round" />
 
-    <TextView
-        android:id="@+id/venue_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Hey Bob"
-        android:textSize="30sp" />
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/venue_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hey Bob"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/venue_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="- N/A"
+            android:textSize="12sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/venue_distance_from_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20 miles from city center"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 
 </LinearLayout>
