@@ -31,12 +31,21 @@ open class BaseActivity : AppCompatActivity(), IRequester {
         networkSingleton.addToRequestQueue(req)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
+    protected fun cancelRequests() {
         Log.d(javaClass.simpleName, "Cancelling requests for: $tag")
 
         networkSingleton.cancel(tag)
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        cancelRequests()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        cancelRequests()
+    }
 }
