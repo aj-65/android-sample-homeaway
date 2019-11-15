@@ -1,9 +1,12 @@
 package com.jtigernova.findit.activity
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import androidx.core.text.trimmedLength
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,14 +14,12 @@ import com.jtigernova.findit.Constants.CITY_CENTER_GPS
 import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.model.Venue
-import com.jtigernova.findit.model.VenueCategory
-import com.jtigernova.findit.model.VenueCategoryIcon
-import com.jtigernova.findit.model.VenueLocation
 import com.jtigernova.findit.persistence.Prefs
-import com.jtigernova.findit.repository.DataRepository
+import com.jtigernova.findit.repository.AppState
 import com.jtigernova.findit.view.VenueItemAdapter
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : BaseActivity() {
 
@@ -38,12 +39,37 @@ class MainActivity : BaseActivity() {
 
         fab.hide()
 
+        initSearch()
         initViewModels()
         initResults()
     }
 
+    private fun initSearch() {
+        search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(text: Editable?) {
+                if (text.toString().trimmedLength() > 2) {
+                    cancelRequests()
+
+                    mFourSq.getPlaces(text.toString(), { success: Boolean, venues: Array<Venue> ->
+                        recyclerView.adapter = getAdapter(venues = venues)
+                    })
+                } else {
+                    recyclerView.adapter = null
+                }
+            }
+        })
+    }
+
     private fun initViewModels() {
-        favViewModel = DataRepository.favoriteViewModel
+        favViewModel = AppState.favoriteViewModel
 
         favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this)
 
@@ -61,34 +87,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initResults() {
-
-        val mockIcon = VenueCategoryIcon("https://www.google.com/images/branding/" +
-                "googlelogo/2x/googlelogo_color_272x92dp", ".png")
-
-        val venues = arrayListOf(
-                Venue(id = "0", name = "Bob's", url = "https://google.com",
-                        categories = listOf(
-                                VenueCategory(id = "0", name = "Test", shortName = "Testtest",
-                                        pluralName = "Tests", primary = true, icon = mockIcon)),
-                        location = VenueLocation(address = "123 lane", lat = 30.2747,
-                                lng = -97.7404, postalCode = "23231", cc = "", city = "Austin",
-                                state = "Texas", country = "USA",
-                                formattedAddress = listOf("123 land"))),
-                Venue(id = "1", name = "Tim Burger Shop", url = "https://google.com",
-                        categories = listOf(
-                                VenueCategory(id = "1", name = "Test", shortName = "Testtest",
-                                        pluralName = "Tests", primary = true, icon = mockIcon)),
-                        location = VenueLocation(address = "123 lane", lat = 30.2637675,
-                                lng = -97.7380349, postalCode = "23231", cc = "", city = "Austin",
-                                state = "Texas", country = "USA",
-                                formattedAddress = listOf("1001 1st Ave (at Madison St)",
-                                        "Seattle, WA 98104",
-                                        "United States"))))
-
-        for (venue in venues) {
-            venue.location?.calculateDistanceFromCityCenter(CITY_CENTER_GPS)
-        }
-
         viewManager = LinearLayoutManager(this@MainActivity)
 
         recyclerView = findViewById<RecyclerView>(R.id.results).apply {
@@ -97,7 +95,7 @@ class MainActivity : BaseActivity() {
 
             layoutManager = viewManager
 
-            adapter = getAdapter(venues)
+            adapter = null
         }
     }
 
@@ -109,15 +107,22 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun getAdapter(venues: ArrayList<Venue>): RecyclerView.Adapter<*> {
+    private fun getAdapter(venues: Array<Venue>): RecyclerView.Adapter<*> {
         viewAdapter = VenueItemAdapter(context = this@MainActivity, venues = venues,
                 favoriteViewModel = favViewModel,
                 favoriteVenueIds = favViewModel.favoriteVenues.value!!,
                 venueClick = venueClick())
 
+        for (venue in venues) {
+            venue.location?.calculateDistanceFromCityCenter(CITY_CENTER_GPS)
+
+            venue.determineCategory()
+        }
+
         if (venues.any()) {
             fab.setOnClickListener {
-                Nav.venuesMap(context = this@MainActivity, venues = venues)
+                Nav.venuesMap(context = this@MainActivity, venues =
+                venues.toCollection(ArrayList()))
             }
 
             fab.show()

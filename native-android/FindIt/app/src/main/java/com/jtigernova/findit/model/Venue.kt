@@ -19,9 +19,15 @@ data class Venue(val id: String?, val name: String?, val url: String?,
 
     override fun describeContents() = 0
 
-    val mainCategory = categories.firstOrNull { it?.primary == true }
+    var mainCategory: VenueCategory? = null
 
-    val mainCategoryName = mainCategory?.name
+    var mainCategoryName: String? = null
+
+    fun determineCategory() {
+        mainCategory = categories.firstOrNull { it?.primary == true }
+
+        mainCategoryName = mainCategory?.name
+    }
 
     override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
         writeString(id)
@@ -141,7 +147,9 @@ data class VenueCategoryIcon(val prefix: String?, val suffix: String?) : Parcela
             source.readString()
     )
 
-    val fullPath = prefix + suffix
+    fun getFullPath(): String? {
+        return prefix + ICON_RES + suffix
+    }
 
     override fun describeContents() = 0
 
@@ -160,5 +168,7 @@ data class VenueCategoryIcon(val prefix: String?, val suffix: String?) : Parcela
 
             override fun newArray(size: Int): Array<VenueCategoryIcon?> = arrayOfNulls(size)
         }
+
+        const val ICON_RES = "88"
     }
 }

@@ -15,7 +15,7 @@ import com.jtigernova.findit.ext.setupFavorite
 import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 
-class VenueItemAdapter(private val context: Context, val venues: List<Venue>,
+class VenueItemAdapter(private val context: Context, val venues: Array<Venue>,
                        private val favoriteVenueIds: Set<String>,
                        private val favoriteViewModel: FavoriteViewModel,
                        private val venueClick: (Venue, viewPosition: Int) -> Unit) :
@@ -46,7 +46,7 @@ class VenueItemAdapter(private val context: Context, val venues: List<Venue>,
                         venue.location?.getDistanceFromCityCenterInMilesDisplay())
 
         //load image
-        context.loadImgInto(uri = venue.mainCategory?.icon?.fullPath,
+        context.loadImgInto(uri = venue.mainCategory?.icon?.getFullPath(),
                 imageView = holder.view.findViewById(R.id.venue_image))
 
         //TODO this will be a bug when favorites are changed on another screen and then

@@ -97,4 +97,5 @@
     <string name="click_learn">Click to learn more</string>
     <string name="add_favorite">Add favorite</string>
     <string name="saved_favorite">Saved!</string>
+    <string name="hint_search">Start typing. Maybe \'pizza\'</string>
 </resources>

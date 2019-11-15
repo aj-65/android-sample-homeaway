@@ -19,7 +19,7 @@ import com.jtigernova.findit.ext.dpToPixels
 import com.jtigernova.findit.ext.setupFavorite
 import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.persistence.Prefs
-import com.jtigernova.findit.repository.DataRepository
+import com.jtigernova.findit.repository.AppState
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 import kotlinx.android.synthetic.main.content_venue_detail.*
 
@@ -46,7 +46,7 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initViewModels() {
-        favViewModel = DataRepository.favoriteViewModel
+        favViewModel = AppState.favoriteViewModel
     }
 
     private fun initMap() {
