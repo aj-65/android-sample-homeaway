@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jtigernova.findit.Constants.CITY_CENTER_GPS
@@ -16,6 +15,7 @@ import com.jtigernova.findit.model.VenueCategory
 import com.jtigernova.findit.model.VenueCategoryIcon
 import com.jtigernova.findit.model.VenueLocation
 import com.jtigernova.findit.persistence.Prefs
+import com.jtigernova.findit.repository.DataRepository
 import com.jtigernova.findit.view.VenueItemAdapter
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,10 +23,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : BaseActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewAdapter: VenueItemAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     private lateinit var favViewModel: FavoriteViewModel
+
+    private var currentItemPosition: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,17 +39,24 @@ class MainActivity : BaseActivity() {
         fab.hide()
 
         initViewModels()
-
         initResults()
     }
 
     private fun initViewModels() {
-        favViewModel = ViewModelProviders.of(this).get(FavoriteViewModel::class.java)
+        favViewModel = DataRepository.favoriteViewModel
 
-        favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this@MainActivity)
+        favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this)
 
         favViewModel.favoriteVenues.observe(this, Observer<MutableSet<String>> {
-            Prefs.saveFavoriteVenues(this@MainActivity, it)
+            Prefs.saveFavoriteVenues(this, it)
+
+            if (currentItemPosition < 0 ||
+                    (currentItemPosition >= viewAdapter.itemCount)) return@Observer
+
+            //use post() to avoid state issues with recyclerView
+            recyclerView.post {
+                viewAdapter.notifyItemChanged(currentItemPosition)
+            }
         })
     }
 
@@ -92,10 +101,19 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun venueClick(): (venue: Venue, viewPosition: Int) -> Unit {
+        return { venue: Venue, viewPosition: Int ->
+            currentItemPosition = viewPosition
+
+            Nav.venueDetails(context = this, venue = venue)
+        }
+    }
+
     private fun getAdapter(venues: ArrayList<Venue>): RecyclerView.Adapter<*> {
         viewAdapter = VenueItemAdapter(context = this@MainActivity, venues = venues,
-                api = mFourSq, favoriteViewModel = favViewModel,
-                favoriteVenueIds = favViewModel.favoriteVenues.value!!)
+                favoriteViewModel = favViewModel,
+                favoriteVenueIds = favViewModel.favoriteVenues.value!!,
+                venueClick = venueClick())
 
         if (venues.any()) {
             fab.setOnClickListener {

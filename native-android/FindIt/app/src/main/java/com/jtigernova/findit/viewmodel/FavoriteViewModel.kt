@@ -7,6 +7,7 @@ import com.jtigernova.findit.model.Venue
 class FavoriteViewModel : ViewModel() {
 
     val favoriteVenues: MutableLiveData<MutableSet<String>> by lazy {
+        //        DataRepository.getFavoriteVenueIds()
         MutableLiveData<MutableSet<String>>()
     }
 

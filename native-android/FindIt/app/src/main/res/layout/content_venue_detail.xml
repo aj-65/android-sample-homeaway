@@ -51,6 +51,12 @@
             android:layout_marginStart="24dp"
             android:text="N/A"
             android:textSize="14sp" android:textStyle="italic" />
+
+        <CheckBox
+            android:id="@+id/fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_favorite" />
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

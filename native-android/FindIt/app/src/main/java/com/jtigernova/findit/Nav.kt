@@ -7,6 +7,7 @@ import com.jtigernova.findit.activity.PARAM_VENUES
 import com.jtigernova.findit.activity.VenueDetailActivity
 import com.jtigernova.findit.activity.VenuesMapActivity
 import com.jtigernova.findit.model.Venue
+import com.jtigernova.findit.viewmodel.FavoriteViewModel
 
 object Nav {
     fun venueDetails(context: Context, venue: Venue) {

@@ -3,7 +3,6 @@ package com.jtigernova.findit.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -17,7 +16,11 @@ import com.jtigernova.findit.Constants.CITY_NAME
 import com.jtigernova.findit.Constants.DEFAULT_ZOOM
 import com.jtigernova.findit.R
 import com.jtigernova.findit.ext.dpToPixels
+import com.jtigernova.findit.ext.setupFavorite
 import com.jtigernova.findit.model.Venue
+import com.jtigernova.findit.persistence.Prefs
+import com.jtigernova.findit.repository.DataRepository
+import com.jtigernova.findit.viewmodel.FavoriteViewModel
 import kotlinx.android.synthetic.main.content_venue_detail.*
 
 const val PARAM_VENUE = "venue"
@@ -25,12 +28,9 @@ const val PARAM_VENUE = "venue"
 class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var venue: Venue
-
-    private lateinit var name: TextView
-    private lateinit var category: TextView
-    private lateinit var address: TextView
-
     private lateinit var mMap: GoogleMap
+
+    private lateinit var favViewModel: FavoriteViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +40,13 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
         venue = intent.getParcelableExtra(PARAM_VENUE)!!
 
+        initViewModels()
         initDetail(venue)
         initMap()
+    }
+
+    private fun initViewModels() {
+        favViewModel = DataRepository.favoriteViewModel
     }
 
     private fun initMap() {
@@ -51,18 +56,20 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initDetail(venue: Venue?) {
-        name = findViewById(R.id.name)
-        category = findViewById(R.id.category)
-        address = findViewById(R.id.address)
-
+        val context = this@VenueDetailActivity
         name.text = venue?.name
         category.text = venue?.mainCategoryName ?: "Unknown"
         venue_distance_from_city_center.text = getString(R.string.distance_from_city_center,
                 venue?.location?.getDistanceFromCityCenterInMilesDisplay())
+        fav.isChecked = Prefs.isFavoriteVenue(context, venue?.id!!)
+
+        fav.setupFavorite(context = context, favViewModel = favViewModel, venue = venue, onCheckedChange = {
+
+        })
 
         val sb = StringBuilder()
 
-        for (line in venue?.location?.formattedAddress!!) {
+        for (line in venue.location?.formattedAddress!!) {
             sb.appendln(line)
         }
 
