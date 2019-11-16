@@ -2,6 +2,8 @@
 
 Note: The original requirement was to use the city of Seattle. But this app will use Austin instead.
 
+See: https://github.com/homeaway/Android-Coding-Challenge
+
 # Libraries
 
 This app uses the following libraries.
