@@ -27,17 +27,13 @@ object Prefs {
         }
     }
 
-    fun getFavoriteVenues(context: Context): Iterable<String> {
+    fun getFavoriteVenues(context: Context): MutableList<String> {
         val prefs = get(context)
 
         if (prefs.contains(KEY_FAV_VENUES))
             return gson.fromJson(prefs.getString(KEY_FAV_VENUES, "")!!,
-                    Array<String>::class.java).toList()
+                    Array<String>::class.java).toMutableList()
 
-        return listOf()
-    }
-
-    fun isFavoriteVenue(context: Context, venueId: String): Boolean {
-        return getFavoriteVenues(context).contains(venueId)
+        return mutableListOf()
     }
 }

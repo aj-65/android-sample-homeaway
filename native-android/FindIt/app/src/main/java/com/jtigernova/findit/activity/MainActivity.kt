@@ -45,6 +45,12 @@ class MainActivity : BaseActivity() {
         initResults()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        Prefs.saveFavoriteVenues(this, favViewModel.favoriteVenues.value!!.toList())
+    }
+
     private fun initSearch() {
         search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -71,12 +77,11 @@ class MainActivity : BaseActivity() {
 
     private fun initViewModels() {
         favViewModel = AppState.favoriteViewModel
+//        favViewModel = ViewModelProviders.of(this).get(FavoriteViewModel::class.java)
 
         favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this).toMutableSet()
 
         favViewModel.favoriteVenues.observe(this, Observer<MutableSet<String>> {
-            Prefs.saveFavoriteVenues(this, it)
-
             if (currentItemPosition < 0 ||
                     (currentItemPosition >= viewAdapter.itemCount)) return@Observer
 
@@ -111,13 +116,10 @@ class MainActivity : BaseActivity() {
     private fun getAdapter(venues: Array<Venue>): RecyclerView.Adapter<*> {
         viewAdapter = VenueItemAdapter(context = this@MainActivity, venues = venues,
                 favoriteViewModel = favViewModel,
-                favoriteVenueIds = favViewModel.favoriteVenues.value!!,
                 venueClick = venueClick())
 
         for (venue in venues) {
             venue.location?.calculateDistanceFromCityCenter(CITY_CENTER_GPS)
-
-            venue.determineCategory()
         }
 
         if (venues.any()) {

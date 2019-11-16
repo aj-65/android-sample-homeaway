@@ -19,14 +19,12 @@ data class Venue(val id: String?, val name: String?, val url: String?,
 
     override fun describeContents() = 0
 
-    var mainCategory: VenueCategory? = null
+    fun getMainCategory(): VenueCategory? {
+        return categories.firstOrNull { it?.primary == true }
+    }
 
-    var mainCategoryName: String? = null
-
-    fun determineCategory() {
-        mainCategory = categories.firstOrNull { it?.primary == true }
-
-        mainCategoryName = mainCategory?.name
+    fun getMainCategoryName(): String? {
+        return getMainCategory()?.name
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {

@@ -16,7 +16,6 @@ import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 
 class VenueItemAdapter(private val context: Context, val venues: Array<Venue>,
-                       private val favoriteVenueIds: Set<String>,
                        private val favoriteViewModel: FavoriteViewModel,
                        private val venueClick: (Venue, viewPosition: Int) -> Unit) :
         RecyclerView.Adapter<VenueItemAdapter.ViewHolder>() {
@@ -33,30 +32,30 @@ class VenueItemAdapter(private val context: Context, val venues: Array<Venue>,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val venue = venues[position]
 
-        holder.view.tag = venue.id
-
         val name = holder.view.findViewById<TextView>(R.id.venue_name)
         val icon = holder.view.findViewById<ImageView>(R.id.venue_image)
+        val distance = holder.view.findViewById<TextView>(R.id.venue_distance_from_city_center)
+        val category = holder.view.findViewById<TextView>(R.id.venue_category)
         val fav = holder.view.findViewById<CheckBox>(R.id.venue_fav)
+
+        //to really recycle, we need to delete any listeners before making changes
+        fav.setOnCheckedChangeListener(null)
+        name.setOnClickListener(null)
+        icon.setOnClickListener(null)
 
         //replace the view
         name.text = venue.name
-        holder.view.findViewById<TextView>(R.id.venue_distance_from_city_center).text =
-                context.getString(R.string.distance_from_city_center,
-                        venue.location?.getDistanceFromCityCenterInMilesDisplay())
+        category.text = venue.getMainCategoryName() ?: context.getString(R.string.category_unknown)
+        distance.text = context.getString(R.string.distance_from_city_center,
+                venue.location?.getDistanceFromCityCenterInMilesDisplay())
 
         //load image
-        context.loadImgInto(uri = venue.mainCategory?.icon?.getFullPath(),
-                imageView = holder.view.findViewById(R.id.venue_image))
+        context.loadImgInto(uri = venue.getMainCategory()?.icon?.getFullPath(), imageView = icon)
 
-        //TODO this will be a bug when favorites are changed on another screen and then
-        //return to the screen and then scroll
-        fav.isChecked = favoriteVenueIds.contains(venue.id)
+        fav.isChecked = favoriteViewModel.favoriteVenues.value?.contains(venue.id)!!
 
         fav.setupFavorite(context = context, favViewModel = favoriteViewModel,
-                venue = venue, onCheckedChange = {
-            //notifyItemChanged(position, it)
-        })
+                venue = venue)
 
         //event listeners
         val cl = View.OnClickListener {

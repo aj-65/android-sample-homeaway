@@ -7,7 +7,6 @@ import com.jtigernova.findit.model.Venue
 class FavoriteViewModel : ViewModel() {
 
     val favoriteVenues: MutableLiveData<MutableSet<String>> by lazy {
-        //        AppState.getFavoriteVenueIds()
         MutableLiveData<MutableSet<String>>()
     }
 
@@ -15,13 +14,12 @@ class FavoriteViewModel : ViewModel() {
         favoriteVenues.value?.add(venue.id!!)
 
         //notify observers
-        favoriteVenues.value = favoriteVenues.value
+        favoriteVenues.postValue(favoriteVenues.value)
     }
 
     fun removeFavoriteVenue(venue: Venue) {
         favoriteVenues.value?.remove(venue.id!!)
-
         //notify observers
-        favoriteVenues.value = favoriteVenues.value
+        favoriteVenues.postValue(favoriteVenues.value)
     }
 }

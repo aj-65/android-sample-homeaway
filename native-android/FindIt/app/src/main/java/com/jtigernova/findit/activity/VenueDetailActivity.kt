@@ -17,8 +17,8 @@ import com.jtigernova.findit.Constants.DEFAULT_ZOOM
 import com.jtigernova.findit.R
 import com.jtigernova.findit.ext.dpToPixels
 import com.jtigernova.findit.ext.setupFavorite
+import com.jtigernova.findit.ext.updateFavoriteText
 import com.jtigernova.findit.model.Venue
-import com.jtigernova.findit.persistence.Prefs
 import com.jtigernova.findit.repository.AppState
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 import kotlinx.android.synthetic.main.content_venue_detail.*
@@ -35,7 +35,6 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_venue_detail)
-//        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         venue = intent.getParcelableExtra(PARAM_VENUE)!!
@@ -58,15 +57,13 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun initDetail(venue: Venue?) {
         val context = this@VenueDetailActivity
         name.text = venue?.name
-        category.text = venue?.mainCategoryName ?: "Unknown"
+        category.text = venue?.getMainCategoryName() ?: getString(R.string.category_unknown)
         venue_distance_from_city_center.text = getString(R.string.distance_from_city_center,
                 venue?.location?.getDistanceFromCityCenterInMilesDisplay())
 
-        fav.isChecked = Prefs.isFavoriteVenue(context, venue?.id!!)
-
-        fav.setupFavorite(context = context, favViewModel = favViewModel, venue = venue, onCheckedChange = {
-
-        })
+        fav.isChecked = favViewModel.favoriteVenues.value!!.contains(venue!!.id)
+        fav.updateFavoriteText(context)
+        fav.setupFavorite(context = context, favViewModel = favViewModel, venue = venue)
 
         val sb = StringBuilder()
 
@@ -103,7 +100,7 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             val venueLocLatLng = LatLng(venueLoc.lat, venueLoc.lng)
             val locOpts = MarkerOptions().position(venueLocLatLng).apply {
                 title(venue.name)
-                snippet(venue.mainCategoryName)
+                snippet(venue.getMainCategoryName() ?: getString(R.string.category_unknown))
             }
 
             mMap.addMarker(locOpts).showInfoWindow()
