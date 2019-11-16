@@ -11,4 +11,6 @@
     <string name="saved_favorite">Saved!</string>
     <string name="hint_search">Start typing. Maybe \'pizza\'</string>
     <string name="category_unknown">Unknown</string>
+    <string name="app_desc">What would you like to find?</string>
+    <string name="try_another">Try Something Else :(</string>
 </resources>

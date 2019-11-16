@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.trimmedLength
 import androidx.lifecycle.Observer
@@ -62,14 +64,24 @@ class MainActivity : BaseActivity() {
             }
 
             override fun afterTextChanged(text: Editable?) {
-                if (text.toString().trimmedLength() > 2) {
-                    cancelRequests()
+                cancelRequests()
+                error.visibility = View.INVISIBLE
 
-                    mFourSq.getPlaces(text.toString(), { success: Boolean, venues: Array<Venue> ->
-                        recyclerView.adapter = getAdapter(venues = venues)
-                    })
+                if (text.toString().trimmedLength() > 2) {
+                    loading.visibility = View.VISIBLE
+
+                    mFourSq.getPlaces(text.toString()) { success: Boolean, venues: Array<Venue> ->
+                        if (success && venues.any()) {
+                            recyclerView.adapter = getAdapter(venues = venues)
+                        } else {
+                            error.visibility = View.VISIBLE
+                        }
+
+                        loading.visibility = View.INVISIBLE
+                    }
                 } else {
                     recyclerView.adapter = null
+                    loading.visibility = View.INVISIBLE
                 }
             }
         })
