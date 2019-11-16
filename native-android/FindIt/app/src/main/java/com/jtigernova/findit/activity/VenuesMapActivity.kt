@@ -11,8 +11,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
-import com.jtigernova.findit.Constants.CITY_CENTER_GPS
-import com.jtigernova.findit.Constants.MAP_DEFAULT_ZOOM
 import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.ext.dpToPixels
@@ -87,9 +85,6 @@ class VenuesMapActivity : AppCompatActivity(), OnMapReadyCallback {
             //send to detail screen
             Nav.venueDetails(this@VenuesMapActivity, venue)
         }
-
-        //as we wait for the map to fully load, let's focus on the city center
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, MAP_DEFAULT_ZOOM))
 
         //make sure that map layout is loaded before setting bounds
         mMap.setOnMapLoadedCallback {
