@@ -6,7 +6,6 @@ import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.trimmedLength
 import androidx.lifecycle.Observer
@@ -16,7 +15,6 @@ import com.jtigernova.findit.Constants.CITY_CENTER_GPS
 import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.model.Venue
-import com.jtigernova.findit.persistence.Prefs
 import com.jtigernova.findit.repository.AppState
 import com.jtigernova.findit.view.VenueItemAdapter
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
@@ -50,7 +48,13 @@ class MainActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
 
-        Prefs.saveFavoriteVenues(this, favViewModel.favoriteVenues.value!!.toList())
+        AppState.persist(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        AppState.persist(this)
     }
 
     private fun initSearch() {
@@ -90,9 +94,7 @@ class MainActivity : BaseActivity() {
 
     private fun initViewModels() {
         favViewModel = AppState.favoriteViewModel
-//        favViewModel = ViewModelProviders.of(this).get(FavoriteViewModel::class.java)
-
-        favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this).toMutableSet()
+        AppState.load(this)
 
         favViewModel.favoriteVenues.observe(this, Observer<MutableSet<String>> {
             if (currentItemPosition < 0 ||
