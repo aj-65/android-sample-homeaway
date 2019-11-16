@@ -1,4 +1,4 @@
-# android-sample-homeaway
+# FindIt
 
 Note: The original requirement was to use the city of Seattle. But this app will use Austin instead.
 
