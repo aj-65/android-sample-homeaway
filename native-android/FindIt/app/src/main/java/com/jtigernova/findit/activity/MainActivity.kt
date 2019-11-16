@@ -74,6 +74,7 @@ class MainActivity : BaseActivity() {
                         if (success && venues.any()) {
                             recyclerView.adapter = getAdapter(venues = venues)
                         } else {
+                            recyclerView.adapter = null
                             error.visibility = View.VISIBLE
                         }
 
