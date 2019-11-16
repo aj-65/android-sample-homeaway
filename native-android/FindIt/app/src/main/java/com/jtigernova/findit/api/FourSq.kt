@@ -15,7 +15,7 @@ class FourSq(private val requester: IRequester) {
         url += "&client_secret=" + "UUGMKAK3FXMNP0NQX50NJC145O0TB5GHZAVIQ4UVIO5PT5X3"
         url += "&near=" + "Austin,+TX"
         url += "&query=$search"
-        url += "&limit=" + 25
+        url += "&limit=" + LIMIT_COUNT
         url += "&v=20180401"
 
         val request = JsonObjectRequest(Request.Method.GET, url, null,
@@ -32,5 +32,9 @@ class FourSq(private val requester: IRequester) {
                 })
 
         requester.doRequest(request)
+    }
+
+    companion object {
+        const val LIMIT_COUNT = 15
     }
 }
