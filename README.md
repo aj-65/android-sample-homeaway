@@ -15,3 +15,9 @@ Glide - Downloading, caching, and displaying images pull from the web
 Volley - Network requests. Fast and simple
 
 Google Maps - Display venue locations
+
+# Build and run
+
+Open native-android/FindIt in Android Studio. Click run.
+
+Or run: adb install native-android/FindIt/release/app-v1.0.apk
