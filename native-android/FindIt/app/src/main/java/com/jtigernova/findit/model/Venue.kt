@@ -169,6 +169,7 @@ data class VenueCategoryIcon(val prefix: String?, val suffix: String?) : Parcela
             override fun newArray(size: Int): Array<VenueCategoryIcon?> = arrayOfNulls(size)
         }
 
-        const val ICON_RES = "88"
+        //show icon 88x88 with a background
+        const val ICON_RES = "bg_88"
     }
 }

@@ -61,6 +61,7 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         category.text = venue?.mainCategoryName ?: "Unknown"
         venue_distance_from_city_center.text = getString(R.string.distance_from_city_center,
                 venue?.location?.getDistanceFromCityCenterInMilesDisplay())
+
         fav.isChecked = Prefs.isFavoriteVenue(context, venue?.id!!)
 
         fav.setupFavorite(context = context, favViewModel = favViewModel, venue = venue, onCheckedChange = {

@@ -35,6 +35,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.title = getString(R.string.app_name_city)
         setSupportActionBar(toolbar)
 
         fab.hide()
@@ -71,7 +72,7 @@ class MainActivity : BaseActivity() {
     private fun initViewModels() {
         favViewModel = AppState.favoriteViewModel
 
-        favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this)
+        favViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(this).toMutableSet()
 
         favViewModel.favoriteVenues.observe(this, Observer<MutableSet<String>> {
             Prefs.saveFavoriteVenues(this, it)
