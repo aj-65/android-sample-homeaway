@@ -63,7 +63,9 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
         fav.isChecked = favViewModel.favoriteVenues.value!!.contains(venue!!.id)
         fav.updateFavoriteText(context)
-        fav.setupFavorite(context = context, favViewModel = favViewModel, venue = venue)
+        fav.setupFavorite(context = context, favViewModel = favViewModel, venue = venue, onCheckedChange = {
+            AppState.persist(this)
+        })
 
         val sb = StringBuilder()
 
