@@ -64,6 +64,7 @@ class VenueItemAdapter(private val context: Context, val venues: Array<Venue>,
 
         name.setOnClickListener(cl)
         icon.setOnClickListener(cl)
+        distance.setOnClickListener(cl)
     }
 
     override fun getItemCount() = venues.size
