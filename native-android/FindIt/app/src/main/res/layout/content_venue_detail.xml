@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="N/A"
+            android:text="@string/n_a"
             android:textSize="24sp" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:text="N/A"
+            android:text="@string/n_a"
             android:textSize="14sp"
             android:textStyle="italic" />
 
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
-            android:text="Address:"
+            android:text="@string/address"
             android:textSize="18sp" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:text="N/A"
+            android:text="@string/n_a"
             android:textSize="14sp"
             android:textStyle="italic" />
 

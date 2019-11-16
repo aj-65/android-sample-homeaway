@@ -2,7 +2,6 @@ package com.jtigernova.findit.activity
 
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -13,11 +12,10 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jtigernova.findit.Constants.CITY_CENTER_GPS
 import com.jtigernova.findit.Constants.CITY_NAME
-import com.jtigernova.findit.Constants.DEFAULT_ZOOM
+import com.jtigernova.findit.Constants.MAP_DEFAULT_ZOOM
 import com.jtigernova.findit.R
 import com.jtigernova.findit.ext.dpToPixels
 import com.jtigernova.findit.ext.setupFavorite
-import com.jtigernova.findit.ext.updateFavoriteText
 import com.jtigernova.findit.model.Venue
 import com.jtigernova.findit.repository.AppState
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
@@ -37,6 +35,7 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_venue_detail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        //require a venue
         venue = intent.getParcelableExtra(PARAM_VENUE)!!
 
         initViewModels()
@@ -56,17 +55,20 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun initDetail(venue: Venue?) {
         val context = this@VenueDetailActivity
+
         name.text = venue?.name
         category.text = venue?.getMainCategoryName() ?: getString(R.string.category_unknown)
         venue_distance_from_city_center.text = getString(R.string.distance_from_city_center,
                 venue?.location?.getDistanceFromCityCenterInMilesDisplay())
 
+        //check from app state if this venue is a favorite
         fav.isChecked = favViewModel.favoriteVenues.value!!.contains(venue!!.id)
-        fav.updateFavoriteText(context)
+
         fav.setupFavorite(context = context, favViewModel = favViewModel, venue = venue, onCheckedChange = {
             AppState.persist(this)
         })
 
+        //build address
         val sb = StringBuilder()
 
         for (line in venue.location?.formattedAddress!!) {
@@ -89,15 +91,16 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.d(TAG, "map is ready")
 
         mMap = googleMap
+        //add zoom controls
         mMap.uiSettings.isZoomControlsEnabled = true
 
         //add marker for city
-
         mMap.addMarker(MarkerOptions().position(CITY_CENTER_GPS).title("Center of $CITY_NAME"))
                 .showInfoWindow()
 
         val venueLoc = venue.location
 
+        //TODO every venue probably has a location from FourSquare, so this can be updated
         if (venueLoc != null) {
             val venueLocLatLng = LatLng(venueLoc.lat, venueLoc.lng)
             val locOpts = MarkerOptions().position(venueLocLatLng).apply {
@@ -112,29 +115,22 @@ class VenueDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             val bounds = LatLngBounds.Builder().include(CITY_CENTER_GPS).include(venueLocLatLng).build()
 
             //as we wait for the map to fully load, let's focus on the city center
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, DEFAULT_ZOOM))
+            //Note: CameraUpdateFactory.newLatLngBounds can not be used until the map is fully loaded
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, MAP_DEFAULT_ZOOM))
 
             //make sure that map layout is loaded before setting bounds
             mMap.setOnMapLoadedCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
             }
         } else {
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, DEFAULT_ZOOM))
+            //fallback to the city marker
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, MAP_DEFAULT_ZOOM))
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(KEY_CAMERA_POSITION, mMap.cameraPosition)
         super.onSaveInstanceState(outState)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package com.jtigernova.findit.activity
 
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -11,7 +12,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jtigernova.findit.Constants.CITY_CENTER_GPS
-import com.jtigernova.findit.Constants.DEFAULT_ZOOM
+import com.jtigernova.findit.Constants.MAP_DEFAULT_ZOOM
 import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.ext.dpToPixels
@@ -38,8 +39,12 @@ class VenuesMapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onStart() {
         super.onStart()
 
+        //let the user know that they can click on a marker
         Toast.makeText(this@VenuesMapActivity, getString(R.string.click_marker),
-                Toast.LENGTH_SHORT).show()
+                Toast.LENGTH_SHORT).apply {
+            setGravity(Gravity.TOP, 0, 0)
+            show()
+        }
     }
 
     /**
@@ -64,8 +69,14 @@ class VenuesMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val venueLatLng = LatLng(venue.location.lat, venue.location.lng)
 
-            mMap.addMarker(MarkerOptions().position(venueLatLng)
-                    .title(venue.name).snippet(getString(R.string.click_learn))).tag = venue
+            val opts = MarkerOptions().apply {
+                position(venueLatLng)
+                title(venue.name)
+                snippet(getString(R.string.click_learn))
+            }
+
+            //set tag so we know the venue after the marker click
+            mMap.addMarker(opts).tag = venue
 
             bounds.include(venueLatLng)
         }
@@ -73,11 +84,12 @@ class VenuesMapActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.setOnInfoWindowClickListener {
             val venue = it.tag as Venue
 
+            //send to detail screen
             Nav.venueDetails(this@VenuesMapActivity, venue)
         }
 
         //as we wait for the map to fully load, let's focus on the city center
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, DEFAULT_ZOOM))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CITY_CENTER_GPS, MAP_DEFAULT_ZOOM))
 
         //make sure that map layout is loaded before setting bounds
         mMap.setOnMapLoadedCallback {

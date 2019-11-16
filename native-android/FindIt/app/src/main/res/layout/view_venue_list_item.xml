@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:contentDescription="Icon"
+        android:contentDescription="@string/venue_category_icon"
         android:padding="10dp"
         android:src="@mipmap/ic_launcher_round" />
 
@@ -23,14 +23,14 @@
             android:id="@+id/venue_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hey Bob"
+            android:text="@string/n_a"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/venue_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="- N/A"
+            android:text="@string/n_a"
             android:textSize="12sp"
             android:textStyle="italic" />
 

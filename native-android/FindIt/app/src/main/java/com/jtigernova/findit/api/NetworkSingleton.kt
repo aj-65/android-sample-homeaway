@@ -5,6 +5,9 @@ import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 
+/**
+ * Networking singleton
+ */
 class NetworkSingleton constructor(context: Context) {
     companion object {
         @Volatile
@@ -24,10 +27,22 @@ class NetworkSingleton constructor(context: Context) {
         Volley.newRequestQueue(context.applicationContext)
     }
 
-    fun <T> addToRequestQueue(req: Request<T>) {
+    /**
+     * Queues up a request
+     *
+     * @param req Request to queue
+     * @param tag Tag to assign to request
+     */
+    fun <T> addToRequestQueue(req: Request<T>, tag: String) {
+        req.tag = tag
         requestQueue.add(req)
     }
 
+    /**
+     * Cancels requests by tag
+     *
+     * @param Tag to filter by
+     */
     fun cancel(tag: String) {
         requestQueue.cancelAll(tag)
     }

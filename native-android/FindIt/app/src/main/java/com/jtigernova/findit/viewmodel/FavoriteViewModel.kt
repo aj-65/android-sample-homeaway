@@ -4,6 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.jtigernova.findit.model.Venue
 
+/**
+ * View model for favorites
+ */
 class FavoriteViewModel : ViewModel() {
 
     val favoriteVenues: MutableLiveData<MutableSet<String>> by lazy {

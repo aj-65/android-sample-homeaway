@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">FindIt</string>
     <string name="app_name_city">FindIt (Austin)</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_venue_detail">VenueDetailActivity</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps">Venues Map</string>
     <string name="distance_from_city_center">%s miles from city center</string>
     <string name="click_marker">Click on a marker!</string>
     <string name="click_learn">Click to learn more</string>
@@ -13,4 +12,7 @@
     <string name="category_unknown">Unknown</string>
     <string name="app_desc">What would you like to find?</string>
     <string name="try_another">Try Something Else :(</string>
+    <string name="n_a">N/A</string>
+    <string name="address">Address:</string>
+    <string name="venue_category_icon">Venue category icon</string>
 </resources>

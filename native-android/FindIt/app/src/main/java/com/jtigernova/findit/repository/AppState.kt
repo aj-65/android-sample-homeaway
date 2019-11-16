@@ -5,17 +5,29 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 
+/**
+ * Class to handle app state
+ */
 object AppState {
     val favoriteViewModel = FavoriteViewModel()
 
+    /**
+     * Loads view models from disk
+     */
     fun load(context: Context) {
         favoriteViewModel.favoriteVenues.value = Prefs.getFavoriteVenues(context).toMutableSet()
     }
 
+    /**
+     * Saves the view models to disk
+     */
     fun persist(context: Context) {
         Prefs.saveFavoriteVenues(context, favoriteViewModel.favoriteVenues.value!!.toList())
     }
 
+    /**
+     * Class to handle saving data to device
+     */
     private object Prefs {
         private const val NAME = "FindIt"
 

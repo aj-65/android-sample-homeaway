@@ -3,8 +3,6 @@ package com.jtigernova.findit.activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.trimmedLength
@@ -29,6 +27,7 @@ class MainActivity : BaseActivity() {
 
     private lateinit var favViewModel: FavoriteViewModel
 
+    //used to know which item UI to update after data changes
     private var currentItemPosition: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +57,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initSearch() {
+        //do searches after the search text changes
         search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -68,14 +68,19 @@ class MainActivity : BaseActivity() {
             }
 
             override fun afterTextChanged(text: Editable?) {
+                //cancel pending requests
                 cancelRequests()
+
                 error.visibility = View.INVISIBLE
 
+                //require at least 3 chars
                 if (text.toString().trimmedLength() > 2) {
                     loading.visibility = View.VISIBLE
 
+                    //call four FourSquare to get places
                     mFourSq.getPlaces(text.toString()) { success: Boolean, venues: Array<Venue> ->
                         if (success && venues.any()) {
+                            //update results
                             recyclerView.adapter = getAdapter(venues = venues)
                         } else {
                             recyclerView.adapter = null
@@ -85,6 +90,7 @@ class MainActivity : BaseActivity() {
                         loading.visibility = View.INVISIBLE
                     }
                 } else {
+                    //clear results
                     recyclerView.adapter = null
                     loading.visibility = View.INVISIBLE
                 }
@@ -94,13 +100,17 @@ class MainActivity : BaseActivity() {
 
     private fun initViewModels() {
         favViewModel = AppState.favoriteViewModel
+        //load app state from disk
         AppState.load(this)
 
+        //watch for changes to favorites
         favViewModel.favoriteVenues.observe(this, Observer<MutableSet<String>> {
+            //current position my not be set yet
             if (currentItemPosition < 0 ||
                     (currentItemPosition >= viewAdapter.itemCount)) return@Observer
 
-            //use post() to avoid state issues with recyclerView
+            //use post() to avoid state issues with recyclerView (UI thread)
+            //for example, we can't notify while the view is scrolling
             recyclerView.post {
                 viewAdapter.notifyItemChanged(currentItemPosition)
             }
@@ -116,57 +126,46 @@ class MainActivity : BaseActivity() {
 
             layoutManager = viewManager
 
+            //nothing in list by default
             adapter = null
         }
     }
 
     private fun venueClick(): (venue: Venue, viewPosition: Int) -> Unit {
         return { venue: Venue, viewPosition: Int ->
+            //update position
             currentItemPosition = viewPosition
 
+            //send to details screen
             Nav.venueDetails(context = this, venue = venue)
         }
     }
 
     private fun getAdapter(venues: Array<Venue>): RecyclerView.Adapter<*> {
+        //create a new adapter for list
         viewAdapter = VenueItemAdapter(context = this@MainActivity, venues = venues,
                 favoriteViewModel = favViewModel,
                 venueClick = venueClick())
 
         for (venue in venues) {
+            //we need to calculate the distance for each venue
             venue.location?.calculateDistanceFromCityCenter(CITY_CENTER_GPS)
         }
 
         if (venues.any()) {
+            //allow the user to display a map of all venues
             fab.setOnClickListener {
-                Nav.venuesMap(context = this@MainActivity, venues =
-                venues.toCollection(ArrayList()))
+                Nav.venuesMap(context = this@MainActivity,
+                        venues = venues.toCollection(ArrayList()))
             }
 
             fab.show()
         } else {
+            //don't allow map if there are no venues
             fab.hide()
             fab.setOnClickListener(null)
         }
 
         return viewAdapter
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        return if (id == R.id.action_settings) {
-            true
-        } else super.onOptionsItemSelected(item)
-
     }
 }
