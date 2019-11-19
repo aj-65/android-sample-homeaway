@@ -4,7 +4,9 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.google.gson.Gson
+import com.jtigernova.findit.Constants.CITY
 import com.jtigernova.findit.model.Venue
+import java.net.URLEncoder
 
 /**
  * FourSquare API
@@ -25,7 +27,7 @@ class FourSq(private val requester: IRequester) {
         //build the request
         url += "?client_id=" + "1T2CTNVBZPZ00LYVP52B3YP4YYL3BCWWIATXUHVMHOCK0UJL"
         url += "&client_secret=" + "UUGMKAK3FXMNP0NQX50NJC145O0TB5GHZAVIQ4UVIO5PT5X3"
-        url += "&near=" + "Austin,+TX"
+        url += "&near=" + URLEncoder.encode(CITY, "UTF-8")
         url += "&query=$search"
         url += "&limit=$LIMIT_COUNT"
         url += "&v=20180401"

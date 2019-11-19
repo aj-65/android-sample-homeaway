@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jtigernova.findit.Constants.CITY_CENTER_GPS
+import com.jtigernova.findit.Constants.CITY_NAME
 import com.jtigernova.findit.Nav
 import com.jtigernova.findit.R
 import com.jtigernova.findit.model.Venue
@@ -34,7 +35,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = getString(R.string.app_name_city)
+        toolbar.title = getString(R.string.app_name_city, CITY_NAME)
         setSupportActionBar(toolbar)
 
         fab.hide()

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">FindIt</string>
-    <string name="app_name_city">FindIt (Austin)</string>
+    <string name="app_name_city">FindIt (%s)</string>
     <string name="title_activity_venue_detail">VenueDetailActivity</string>
     <string name="title_activity_maps">Venues Map</string>
     <string name="distance_from_city_center">%s miles from city center</string>
