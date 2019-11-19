@@ -1,7 +1,5 @@
 # FindIt
 
-Note: The original requirement was to use the city of Seattle. But this app will use Austin instead.
-
 See: https://github.com/homeaway/Android-Coding-Challenge
 
 # Libraries
