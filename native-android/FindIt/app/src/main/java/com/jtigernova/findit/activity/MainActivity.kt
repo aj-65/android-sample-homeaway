@@ -19,6 +19,8 @@ import com.jtigernova.findit.view.VenueItemAdapter
 import com.jtigernova.findit.viewmodel.FavoriteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.coroutines.*
+
 
 class MainActivity : BaseActivity() {
 
@@ -27,6 +29,9 @@ class MainActivity : BaseActivity() {
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     private lateinit var favViewModel: FavoriteViewModel
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var searchTask: Job? = null
 
     //used to know which item UI to update after data changes
     private var currentItemPosition: Int = -1
@@ -58,44 +63,53 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initSearch() {
-        //do searches after the search text changes
-        search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        val handleSearch = fun(search: String) {
+            error.visibility = View.INVISIBLE
 
-            }
+            //require at least 3 chars
+            if (search.trimmedLength() > 2) {
+                loading.visibility = View.VISIBLE
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(text: Editable?) {
-                //cancel pending requests
-                cancelRequests()
-
-                error.visibility = View.INVISIBLE
-
-                //require at least 3 chars
-                if (text.toString().trimmedLength() > 2) {
-                    loading.visibility = View.VISIBLE
-
-                    //call four FourSquare to get places
-                    mFourSq.getPlaces(text.toString()) { success: Boolean, venues: Array<Venue> ->
-                        if (success && venues.any()) {
-                            //update results
-                            recyclerView.adapter = getAdapter(venues = venues)
-                        } else {
-                            recyclerView.adapter = null
-                            error.visibility = View.VISIBLE
-                        }
-
-                        loading.visibility = View.INVISIBLE
+                //call four FourSquare to get places
+                mFourSq.getPlaces(search) { success: Boolean, venues: Array<Venue> ->
+                    if (success && venues.any()) {
+                        //update results
+                        recyclerView.adapter = getAdapter(venues = venues)
+                    } else {
+                        recyclerView.adapter = null
+                        error.visibility = View.VISIBLE
                     }
-                } else {
-                    //clear results
-                    recyclerView.adapter = null
+
                     loading.visibility = View.INVISIBLE
                 }
+            } else {
+                //clear results
+                recyclerView.adapter = null
+                loading.visibility = View.INVISIBLE
             }
+        }
+
+        //do searches after the search text changes
+        search.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(text: Editable?) {
+                searchTask?.cancel()
+                cancelRequests()
+
+                searchTask = coroutineScope.launch {
+                    delay(500L)
+
+                    handleSearch(text.toString())
+                }
+            }
+
+            override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
         })
     }
 
