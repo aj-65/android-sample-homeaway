@@ -18,4 +18,8 @@ Google Maps - Display venue locations
 
 Open native-android/FindIt in Android Studio. Click run.
 
-Or run: adb install native-android/FindIt/release/app-v1.0.apk
+OR
+
+Download an apk from https://github.com/aj-65/android-sample-homeaway/releases
+
+Run: adb install app.apk
