@@ -96,6 +96,7 @@ class MainActivity : BaseActivity() {
                 cancelRequests()
 
                 searchTask = coroutineScope.launch {
+                    //slight pause for user input
                     delay(500L)
 
                     handleSearch(text.toString())
